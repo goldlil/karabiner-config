@@ -1,0 +1,208 @@
+;Mod-Tap Layers example
+{
+ :devices {
+           :kinesis [{:vendor_id 10730}]}
+ 
+ :applications {
+                :jetbrains ["^com\\.jetbrains$"]
+                :slack ["com\\.tinyspeck\\.slackmacgap"]
+                }
+ :templates {
+             :hs-mode "open -g hammerspoon://karabiner-mode-change?mode=%s\\&active=%d"
+             :hs-vimac-start "open -g hammerspoon://start-recursive-vimac"
+             :hs-vimac-stop "open -g hammerspoon://stop-recursive-vimac"
+ }
+
+ 
+ :main [
+        {:des "layers"
+         :rules [;characters-layer
+                 [:keypad_slash ["characters-layer" 1] [:!e-layer :!n-layer :!enter-layer :!delete-layer]
+                  {:afterup ["characters-layer" 0] :alone :down_arrow}]
+                 ;delete-layer
+                 [:equal_sign ["delete-layer" 1] [:!e-layer :!n-layer :!enter-layer :!characters-layer :kinesis]
+                  {:afterup [["delete-layer" 0] ["navigation-layer" 0]] :alone :!Cspacebar}]
+                 ;enter-layer
+                 [:return_or_enter [["enter-layer" 1] [:hs-mode "enter_layer" 1]] [:!e-layer :!n-layer :!delete-layer :!characters-layer]
+                  {:afterup [["enter-layer" 0] [:hs-mode "enter_layer" 0]] :alone :return_or_enter}]
+                 ;e-layer
+                 [:e nil [:!n-layer :!enter-layer :!delete-layer :!characters-layer :!navigation_layer]
+                  {:alone {:key :e :halt true} :delayed {:canceled {:key :e}} :held {:set ["e-layer" 1] :repeat false} :afterup {:set ["e-layer" 0]}
+                   :params {:alone 169 :held 170 :delay 170}}]
+                 ;n-layer
+                 [:n nil [:!e-layer :!enter-layer :!delete-layer :!characters-layer :!navigation_layer]
+                  {:alone {:key :n :halt true} :delayed {:canceled {:key :n}} :held {:set ["n-layer" 1] :repeat false} :afterup {:set ["n-layer" 0]}
+                   :params {:alone 169 :held 170 :delay 170}}] 
+                 [:left_shift ["shift-layer" 1] [:!e-layer :!n-layer :!enter-layer :!delete-layer :kinesis]
+                  {:afterup ["shift-layer" 0] :alone :escape}]
+                 ]}
+        {
+         :des "main layer modification"
+         :rules [:kinesis
+                 [:##9 :comma]
+                ;;  [:3 ["navigation-layer" 1]]
+                 [:##left_command :left_command nil {:alone {:key :tab}}]
+                 [:spacebar :left_shift [:!e-layer] {:alone {:key :spacebar}}]
+                 [[:s :t] :!COTt]]} ;vimac scroll
+        {
+         :des "slack"
+         :rules [
+                 :slack
+                 :enter-layer
+                 [:e :!Ck]]}
+        
+        ;; {
+        ;;  :des "zoom mouse mode"
+        ;;  :rules [:zoom-mouse-mode
+        ;;          [:s :Of12]]
+        ;;  }
+
+        {
+         :des "vimac homerow"
+         :rules[
+                :jetbrains
+                [:right_arrow :!COTt]
+                :delete-layer
+                [:u :!TOSreturn_or_enter] ; show hints
+                [:n [:!TOSreturn_or_enter ["vimac-mode" 1] [:hs-vimac-start]]] ; hints continous 
+                :vimac-mode
+                [:escape [:escape ["vimac-mode" 0] [:hs-vimac-stop]]]
+         ]}
+        
+        {
+         :des "jetbrains"
+         :rules [:jetbrains
+                 :enter-layer
+                 [:u [:!Cup_arrow ["navigation-layer" 0] [:hs-mode "navigation_layer" 1]]]
+                 [:h :!Tg] ;select next cursor 
+                 [:t :!Ttab] ;control tab - last file
+                 [:g :!Cslash] ;comment out code
+                 [:r :!Sescape] ;hide current window
+                 [:n :!Oreturn_or_enter] ;resolve imports
+                 [:m :!Of8] ;evaluate expression
+                 ]}
+        {
+         :des "Comma modificator super"
+         :rules [:characters-layer
+                 [:##keypad_asterisk :comma]]}
+        {
+         :des "Comma modificator"
+         :rules [:delete-layer
+                 [:period :comma]]}
+        {
+         :des "app switcher"
+         :rules [:delete-layer
+                 [:s :!Ctab]
+                 [:c :!Cgrave_accent_and_tilde]
+                 [:r :!Otab]]}
+        {
+         :des "copy/paste"
+         :rules [:delete-layer
+                 [:l :!Cc]
+                 [:g :!Cv]]}
+        {
+         :des "rectangle"
+         :rules [:shift-layer
+                 [:r :!TOleft_arrow]
+                 [:t :!TOright_arrow]
+                 [:l :!TOup_arrow]
+                 [:c :!TOdown_arrow]
+                 [:a :!TOe]
+                 [:g :!TOt]
+                 [:s :!TOreturn_or_enter]]}
+        {
+         :des "navigation layer"
+         :rules [:navigation-layer
+                 [:return_or_enter ["navigation-layer" 0]]
+                 [:s :return_or_enter]
+                 [:t ["navigation-layer" 0]]
+                 [:u :up_arrow]
+                 [:e :down_arrow]
+                 [:n :left_arrow]
+                 [:i :right_arrow]]}
+        ;; {
+        ;; :des "intellij"
+        ;; :rules [[:u[:!Cup_arrow["navigation-layer" 1]]]
+        ;;         [:e :!TSdown_arrow]
+        ;;         [:u :!TSup_arrow]
+        ;;         [:n :!Cf12]]}
+        {:des "back and forward navigation"
+         :rules [:delete-layer
+                 [:e :!Copen_bracket]
+                 [:keypad_slash :!Cclose_bracket]
+                 [:i :!Cf]
+                ;;  [:a :!C]
+                 ]}
+        {
+         :des "navigation-layer-mod"
+         :rules [:kinesis
+                 :e-layer
+                 [:n :down_arrow]
+                 [:i :up_arrow]
+                 [:u :!Stab]]}
+        {
+         :des "numbers"
+         :rules [
+                 :e-layer
+                 [:d :3]
+                 [:c :2]
+                 [:v :1]
+                 [:t :6]
+                 [:s :5]
+                 [:r :4]
+                 [:p :9]
+                 [:l :8]
+                 [:w :7]
+                 [:equal_sign :0]]}
+        {:des "tabbing"
+         :rules [:delete-layer
+                 [:t :!OCright_arrow]
+                 [:d :!OCleft_arrow]]}
+        ;; {
+        ;; :des "Global app search"
+        ;; :rules [[:!TOSspacebar :!Cspacebar]]}
+        ;; {
+        ;; :des "arrows"
+        ;; :rules [[:n :left_arrow]
+        ;;         [:i :right_arrow]
+        ;;         [:u :up_arrow]
+        ;;         [:e :down_arrow]]}
+        {:des "special characters"
+         :rules [:kinesis
+                 [:##8 :comma]
+                 ;character layer
+                 :characters-layer
+                 [:s :equal_sign]
+                 [:p :!Shyphen]
+                 [:2 :!S3]
+                 [:3 :!S8]
+                 [:w :hyphen]
+                 [:l :!S4]
+                 [:b :grave_accent_and_tilde]
+                 [:a :!Sslash]
+                 [:r :slash]
+                 [:t :!Squote]
+                 [:g :quote]
+                 [:z :!S1]
+                 [:v :!Ssemicolon]
+                 [:v :!Ssemicolon]
+                 [:c :semicolon]
+                 [:d :!Sequal_sign]
+                 [:x :!S5]
+                 [:h :!S2]
+                 [:period :!Sbackslash]
+                 [:right_arrow :backslash]
+                 ;n-layer
+                 :n-layer
+                 [:t :!S9]
+                 [:d :!S0]
+                 [:r :!Sopen_bracket]
+                 [:v :!Sclose_bracket]
+                 [:s :open_bracket]
+                 [:c :close_bracket]
+                 [:p :!Sgrave_accent_and_tilde]
+                 [:w :!S7]
+                 [:e :!Scomma]
+                 [:keypad_slash :!Speriod]
+                 [:l :!S6]]} 
+        ]}
